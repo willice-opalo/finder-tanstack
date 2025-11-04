@@ -1,11 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { FaGithubAlt } from "react-icons/fa";
-import { fetchGithubUser } from "../api/githum";
+import { fetchGithubUser } from "../api/github";
+import UserCard from "./UserCard";
+// import { FaClock, FaUser } from "react-icons/fa";
+import RecentSearchUsers from "./RecentSearchUsers";
 
 const UserSearch = () => {
     const [userName, setUserName] = useState('')
     const [submittedUsername, setSubmittedUsername] = useState('')
+    const [recentUsers, setRecentUsers] = useState<string[]>([])
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['users', submittedUsername],
@@ -15,7 +18,12 @@ const UserSearch = () => {
 
     const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        setSubmittedUsername(userName.trim())
+        const dataTrimmed = userName.trim()
+        if (!dataTrimmed) return;
+        setSubmittedUsername(dataTrimmed)
+        
+        setRecentUsers(prev => [dataTrimmed, ...prev.filter(u => u !== dataTrimmed)].slice(0, 5));
+
     }
 
     return (
@@ -34,15 +42,17 @@ const UserSearch = () => {
 
             {isError && <p className="status error">{error.message}</p>}
 
-            {data && (
-                <div className="user-card">
-                    <img src={data.avatar_url} alt={data.name} className="avatar" />
-                    <h2>{data.name || data.login}</h2>
-                    <div className="bio">{data.bio}</div>
-                    <a href={data.html_url} className="profile-btn" target="_blank" rel="noopenner noreferrer">
-                        <FaGithubAlt/>View GitHub Profiles
-                    </a>
-                </div>
+            {data && <UserCard user={data} />}
+            
+            {recentUsers.length > 0 && (
+                <RecentSearchUsers
+                    users={recentUsers}
+                    onselect={(userName) => {
+                            setUserName(userName);
+                            setSubmittedUsername(userName)
+                        }
+                    }
+                />
             )}
         </>
     );
