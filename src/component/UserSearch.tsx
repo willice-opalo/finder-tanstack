@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { fetchGithubUser } from "../api/github";
 import UserCard from "./UserCard";
-// import { FaClock, FaUser } from "react-icons/fa";
 import RecentSearchUsers from "./RecentSearchUsers";
 
 const UserSearch = () => {
