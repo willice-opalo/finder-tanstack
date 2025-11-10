@@ -6,6 +6,7 @@ type SearcherProps = {
     users: string[],
     onselect: (username:string) => void
 }
+
 const RecentSearchUsers = ({ users, onselect }: SearcherProps) => {
     const queryClient = useQueryClient()
     return (

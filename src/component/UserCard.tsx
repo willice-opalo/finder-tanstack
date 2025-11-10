@@ -1,6 +1,6 @@
 import { FaGithubAlt } from "react-icons/fa";
 
-type GitHubUser = {
+export type GitHubUser = {
     login: string,
     name: string,
     avatar_url: string,
