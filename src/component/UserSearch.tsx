@@ -15,6 +15,7 @@ const UserSearch = () => {
 
     const [debounceUserName] = useDebounce(userName, 300)
     const [suggestions, setSuggestions] = useState(false)
+    
     //Query to fetch the users
     const { data, isLoading, isError, error, refetch } = useQuery({
         queryKey: ['users', submittedUsername],
@@ -45,7 +46,7 @@ const UserSearch = () => {
     return (
         <>
             <form onSubmit={handleSubmit} className="form">
-                <div className='dropdown-wrapper'>
+                <div className='dropdown-wrapper'> 
                     <input
                         type="text"
                         placeholder="Enter The username..."
@@ -57,24 +58,26 @@ const UserSearch = () => {
                          }}
                     />
                 
-                    {suggestions && suggestionsData > 0 && (
-                    <ul className='suggestions'>
-                        {suggestionsData.slice(0, 5).map((user: GitHubUser) => (
-                            <li key={user.login} onClick={() => {
-                                setUserName(user.login)
-                                setSuggestions(false)
+                    {suggestions && suggestionsData?.length > 0 && (
+                        <ul className='suggestions'>
+                            {suggestionsData.slice(0, 5).map((user: GitHubUser) => (
+                                <li key={user.login} onClick={() => {
+                                    setUserName(user.login)
+                                    setSuggestions(false)
 
-                                if (submittedUsername) {
-                                    setSubmittedUsername(user.login)
-                                } else {
-                                    refetch()
-                                }
-                            }}>
-                                <img src={user.avatar_url} alt={user.login} className="avatar-xs"/>
-                                {user.login}
-                            </li>
-                        ))}
-                    </ul>
+                                    if (submittedUsername !== user.login) {
+                                        setSubmittedUsername(user.login)
+                                    } else {
+                                        refetch()
+                                    }
+
+                                    setRecentUsers(prev => [user.login, ...prev.filter(u => u !== user.login)].slice(0, 5));
+                                }}>
+                                    <img src={user.avatar_url} alt={user.login} className="avatar-xs"/>
+                                    {user.login}
+                                </li>
+                            ))}
+                        </ul>
                     )}
                 </div>    
                 <button type="submit">Search</button>
